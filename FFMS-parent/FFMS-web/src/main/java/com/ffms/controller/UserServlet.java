@@ -42,7 +42,7 @@ public class UserServlet extends HttpServlet {
 		request.setCharacterEncoding("utf-8");
 		String  type= request.getParameter("type");
 		System.out.println(type);
-		User user=new UserDao().login("asd", "123");
+		User user=new UserDao().login("asd", "asd");
 		System.out.println(user);
 	}
 
@@ -54,32 +54,5 @@ public class UserServlet extends HttpServlet {
 		doGet(request, response);
 		
 	}
-public static void main(String[] args) {
-//	 DateTime date = new DateTime(new Date());
-////
-//	DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:ss:SS");
-//    DateTime dateTime = dateTimeFormatter.parseDateTime("2019-10-20 20:50:09");
-//     System.out.println(new UserServlet().isRentalOverdue(dateTime));
-////   System.out.println(dateTime);
-////String  dateTime1 = dateTime.toString("MM-dd");
-////System.out.println(dateTime1);
-//	
 
-	
-DateTime d1 = new DateTime(new DateTime());  
-DateTime d2 = new DateTime("2012-05-01");  
-  Integer i=1;
-//和系统时间比  
-boolean b1 = d1.isAfterNow();
-
-boolean b2 = d1.isBeforeNow(); 
-System.out.println(b2);
-boolean b3 = d1.isEqualNow();  
-  
-//和其他日期比  
-boolean f1 = d1.isAfter(d2);  
-boolean f2 = d1.isBefore(d2);  
-boolean f3 = d1.isEqual(d2); 
-
-  }
 }

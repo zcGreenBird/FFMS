@@ -55,6 +55,7 @@
         <module>FFMS-common</module>
         <module>FFMS-login-service</module>
         <module>FFMS-web</module>
+        <module>FFMS-import-bill-service</module>
 
     </modules>
 </project>

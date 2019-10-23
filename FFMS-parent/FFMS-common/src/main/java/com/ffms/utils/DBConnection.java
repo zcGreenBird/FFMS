@@ -15,7 +15,7 @@ public class DBConnection {
 			try {
 				Class.forName("com.mysql.cj.jdbc.Driver");// 1
 				conn = DriverManager.getConnection(//2
-						"jdbc:mysql://localhost:3306/ffmsdb?serverTimezone=UTC&characterEncoding=utf-8", 
+						"jdbc:mysql://localhost:3306/ffms?serverTimezone=UTC&characterEncoding=utf-8",
 						"root", 
 						"root");
 			} catch (Exception e) {
