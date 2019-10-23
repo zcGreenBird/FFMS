@@ -54,6 +54,7 @@
     <modules>
         <module>FFMS-common</module>
         <module>FFMS-login-service</module>
-    </modules>
+        <module>FFMS-web</module>
 
+    </modules>
 </project>
