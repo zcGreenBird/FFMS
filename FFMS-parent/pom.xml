@@ -53,6 +53,7 @@
     </build>
     <modules>
         <module>FFMS-common</module>
+        <module>FFMS-login-service</module>
     </modules>
 
 </project>
