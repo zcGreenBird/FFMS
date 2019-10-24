@@ -5,8 +5,8 @@ package com.ffms.domain;
 
 
 import lombok.Data;
+import lombok.ToString;
 
-import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -14,6 +14,7 @@ import java.util.Date;
  *
  */
 @Data
+@ToString
 public class Bill  {
     /**
      *id
@@ -30,7 +31,7 @@ public class Bill  {
     /**
      *消费时间
      */
-    private Date consumerNameTime;
+    private String consumerNameTime;
     /**
      *消费金额
      */
