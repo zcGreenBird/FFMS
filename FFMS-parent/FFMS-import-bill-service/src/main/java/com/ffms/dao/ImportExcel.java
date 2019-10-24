@@ -34,16 +34,13 @@ public class ImportExcel {
      * Excel 2007
      */
     private final static String XLSX = "xlsx";
-    /**
-     * 分隔符
-     */
-    private final static String SEPARATOR = "|";
+
 
     public static final String STANDARD_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
     /**
      * 由Excel文件的Sheet导出至List
-     *
+     *暂时不支持，xlsx格式的数据
      * @param file
      * @param sheetNum
      * @return
@@ -56,7 +53,7 @@ public class ImportExcel {
 
     /**
      * 由Excel流的Sheet导出至List
-     *
+     * 暂时不支持，xlsx格式的数据
      * @param is
      * @param extensionName
      * @param sheetNum
@@ -114,30 +111,28 @@ public class ImportExcel {
                         break;
                     case Cell.CELL_TYPE_NUMERIC:
                         if(colIx==9){//对应交易金额
-                            dump.setConsumerAmount(cellValue.formatAsString());
+                            dump.setConsumerAmount(cellValue.formatAsString().trim());
                         }
                         if(colIx==3){
                             if (DateUtil.isCellDateFormatted(cell)) {
                                 DateTime dateTime = new DateTime(cell.getDateCellValue());
-                                dump.setConsumerNameTime(dateTime.toString(STANDARD_FORMAT));
-                            } else {
-                                dump.setConsumerNameTime(null);
+                                dump.setConsumerNameTime(dateTime.toString(STANDARD_FORMAT).trim());
                             }
                         }
                         break;
                     case Cell.CELL_TYPE_STRING:
                          if(colIx==8){//对应商品名
-                             dump.setConsumerName(cellValue.getStringValue());
+                             dump.setConsumerName(cellValue.getStringValue().trim());
                          }
                          if(colIx==7){//对应交易对方
-                             dump.setTradingParty(cellValue.getStringValue());
+                             dump.setTradingParty(cellValue.getStringValue().trim());
                          }
 
                         if(colIx==14){//对应备注
-                         dump.setRemarks(cellValue.getStringValue());
+                         dump.setRemarks(cellValue.getStringValue().trim());
                         }
                         if(colIx==10){
-                            dump.setType(cellValue.getStringValue());
+                            dump.setType(cellValue.getStringValue().trim());
                         }
                         break;
                     case Cell.CELL_TYPE_FORMULA:
@@ -155,7 +150,5 @@ public class ImportExcel {
         return list;
     }
 
-    public static void main(String[] args) throws IOException {
-      System.out.println(exportListFromExcel(new File("E://asd.xls"),0).toString());
-    }
+
 }

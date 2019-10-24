@@ -1,5 +1,9 @@
 package com.ffms.domain;
 
+
+
+
+
 import lombok.Data;
 
 import java.io.Serializable;
@@ -10,7 +14,7 @@ import java.util.Date;
  *
  */
 @Data
-public class Bill implements Serializable {
+public class Bill  {
     /**
      *id
      */
@@ -47,4 +51,6 @@ public class Bill implements Serializable {
      *备注
      */
     private String remarks;
+
+
 }
