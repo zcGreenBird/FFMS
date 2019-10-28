@@ -20,7 +20,7 @@ import com.ffms.domain.User;
 /**
  * Servlet implementation class UserServlet
  */
-@WebServlet("/User")
+@WebServlet("/UserServlet")
 public class UserServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
@@ -40,9 +40,11 @@ public class UserServlet extends HttpServlet {
 		response.setContentType("text/html;charset=UTF-8");
 		response.setCharacterEncoding("utf-8");
 		request.setCharacterEncoding("utf-8");
-		String  type= request.getParameter("type");
-		System.out.println(type);
-		User user=new UserDao().login("asd", "asd");
+		String  name= request.getParameter("userName");
+		String password=request.getParameter("password");
+		System.out.println(name);
+		System.out.println(password);
+		User user=new UserDao().login(name, password);
 		System.out.println(user);
 	}
 
