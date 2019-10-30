@@ -9,6 +9,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 public class LoginServlet extends HttpServlet {
@@ -21,20 +22,23 @@ public class LoginServlet extends HttpServlet {
         //获得request传来的参数
         String username = request.getParameter("userName");
         String password = request.getParameter("password");
-        System.out.println(username);
-        System.out.println(password);
+
         //封装到User类
         User user = new User();
         user.setName(username);
         user.setPassword(password);
         //查询用户是否存在
-        User us = new User();
+
         User userFlag = new UserDao().login(username, password);
+        System.out.println(userFlag);
         //response反馈
         if (userFlag != null) {
-            response.getWriter().println("User:" + username + "登录成功!");
-        } else {
-            response.getWriter().println("用户不存在或密码错误!");
+            request.getSession().setAttribute("user",userFlag);
+            request.getRequestDispatcher("index.html").forward(request, response);
+            }
+
+        else {
+            response.sendRedirect(request.getContextPath()+"/login.html");
         }
 
 

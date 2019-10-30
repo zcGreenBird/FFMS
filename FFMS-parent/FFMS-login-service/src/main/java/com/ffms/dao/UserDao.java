@@ -27,24 +27,33 @@ public class UserDao implements UserService {
  */
 @Override
 public User login(String name ,String password ) {
-	 String sql="select * from tb_user  where name=? and password=?";
-	 User user=new User();
+	 String sql="select id,name,password,type,email,phone_no,address, family_id,real_name from tb_user  where name=? and password=?";
+
 	 try {
 		PreparedStatement ps=conn.prepareStatement(sql);
 		ps.setString(1, name);
 		ps.setString(2, password);
 		ResultSet rs=ps.executeQuery();
 		if(rs.next()) {
+			User user=new User();
 			user.setId(rs.getInt(1));
 			user.setName(rs.getString(2));
 			user.setPassword(rs.getString(3));
+			user.setType(rs.getInt(4));
+			user.setEmail(rs.getString(5));
+			user.setPhoneNo(rs.getString(6));
+			user.setAddress(rs.getString(7));
+			user.setFamilyId(rs.getInt(8));
+			user.setRealName(rs.getString(9));
+			return user;
 		}
+
 	} catch (SQLException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
 	}
-	 
-	 return user;
+	return  null;
+
 }
 
 
