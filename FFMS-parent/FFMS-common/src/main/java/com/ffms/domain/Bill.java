@@ -52,6 +52,9 @@ public class Bill  {
      *备注
      */
     private String remarks;
-
+    /**
+     * 家庭编号
+     */
+    private Integer familyId;
 
 }
