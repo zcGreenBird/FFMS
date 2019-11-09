@@ -7,9 +7,14 @@ import lombok.Data;
 
 import java.util.Date;
 
+/**
+ * 分类占比实体类
+ *
+ */
 @Data
 public class CategoryResponse {
     private int id;
     private String name;
-    private Date creatTime;
+    private double allPrice;//分类总金额
+    private double account;//占比
 }
