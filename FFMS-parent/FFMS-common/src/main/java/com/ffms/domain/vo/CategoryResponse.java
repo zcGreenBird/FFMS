@@ -1,20 +1,17 @@
-package com.ffms.domain;/*
+package com.ffms.domain.vo;/*
   @auther WJW129
-  @date 2019/11/9 - 22:26
+  @date 2019/11/10 - 13:50
 */
 
 import lombok.Data;
 
-import java.util.Date;
-
 /**
- * 分类占比实体类
- *
+ *  分类实体类
  */
 @Data
 public class CategoryResponse {
     private int id;
-    private String name;
+    private String name;//分类名称
     private double allPrice;//分类总金额
     private double account;//占比
 }
