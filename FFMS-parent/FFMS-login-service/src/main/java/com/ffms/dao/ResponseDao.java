@@ -2,7 +2,7 @@ package com.ffms.dao;/*
   @auther WJW129
   @date 2019/11/10 - 14:15
 */
-import com.ffms.domain.vo.*;
+import com.ffms.domain.VO.*;
 import com.ffms.utils.DBConnection;
 
 import java.sql.Connection;
