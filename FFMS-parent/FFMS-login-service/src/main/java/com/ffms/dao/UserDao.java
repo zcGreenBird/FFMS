@@ -84,7 +84,6 @@ public class UserDao implements UserService {
             e.printStackTrace();
             return false;
         }
-
     }
 
     public boolean updateUser(int id, String name, String password) throws Exception {
