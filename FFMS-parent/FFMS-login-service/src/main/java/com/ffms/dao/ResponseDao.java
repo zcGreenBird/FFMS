@@ -2,14 +2,11 @@ package com.ffms.dao;/*
   @auther WJW129
   @date 2019/11/10 - 14:15
 */
-import com.ffms.domain.vo.*;
+import com.ffms.domain.VO.*;
 import com.ffms.domain.*;
 import com.ffms.utils.DBConnection;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -70,9 +67,24 @@ public class ResponseDao {
     /**
      * 查询最近一次的消费记录
      */
-    public List<LastTransResponse> selectLastTrans(){
-        String sql ="select ";
+    public List<LastTransResponse> selectLastTrans() {
+        String sql ="SELECT user_id,consumer_name,consumer_time,consumer_amount FROM (SELECT user_id,consumer_name,consumer_time,consumer_amount FROM tb_consumer ORDER BY consumer_time DESC) c GROUP BY user_id;";
         List<LastTransResponse> list = new ArrayList<>();
+        try {
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(sql);
+            while(rs.next()){
+                LastTransResponse  ltr = null;
+                ltr.setUserId(rs.getInt(1));
+                ltr.setName(rs.getString(2));
+                ltr.setTime(rs.getTime(3));
+                ltr.setPrice(rs.getByte(4));
+                list.add(ltr);
+            }
+            rs.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         return list;
     }
 
