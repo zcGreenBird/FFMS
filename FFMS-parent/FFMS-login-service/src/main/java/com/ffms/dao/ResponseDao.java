@@ -9,6 +9,7 @@ import com.ffms.utils.DBConnection;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 
 public class ResponseDao {
     private Connection conn;
@@ -16,10 +17,6 @@ public class ResponseDao {
         conn = new DBConnection().getConnection();
     }
 
-    /**
-     * 查询所有分类
-     * @return List<CategoryResponse></>
-     */
     /**
      * 分类信息
      * @param user
@@ -69,12 +66,12 @@ public class ResponseDao {
      */
     public List<LastTransResponse> selectLastTrans() {
         String sql ="SELECT user_id,consumer_name,consumer_time,consumer_amount FROM (SELECT user_id,consumer_name,consumer_time,consumer_amount FROM tb_consumer ORDER BY consumer_time DESC) c GROUP BY user_id;";
-        List<LastTransResponse> list = null;
+        List<LastTransResponse> list = new ArrayList<>();
         try {
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(sql);
             while(rs.next()){
-                LastTransResponse  ltr = null;
+                LastTransResponse  ltr = new LastTransResponse();
                 ltr.setUserId(rs.getInt(1));
                 ltr.setName(rs.getString(2));
                 ltr.setTime(rs.getTime(3));
@@ -92,7 +89,7 @@ public class ResponseDao {
      */
     public List<MonthResponse> selectMonthConsume(){
         String sql = "SELECT MONTH(consumer_time) AS '月份',SUM(consumer_amount) AS '金额' FROM tb_consumer GROUP BY MONTH(consumer_time) DESC;";
-        List<MonthResponse> list =null;
+        List<MonthResponse> list =new ArrayList<>();
         try {
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(sql);
@@ -110,5 +107,63 @@ public class ResponseDao {
         }
         return list;
     }
+    /**
+     * 查询上
+     * 个星期和这个星期的消费总额
+     */
+    public List<WeekResponse> selectWeekConsume(){
+        String sql = "select DATE_FORMAT(consumer_time,'%w') as week,SUM(consumer_amount),consumer_time\n" +
+                "from tb_consumer  WHERE consumer_time >= DATE_SUB( DATE_ADD(curdate(),interval -day(curdate())+1 day) , INTERVAL  1  WEEK )\n" +
+                "GROUP BY DATE_FORMAT(consumer_time,'%w')  ORDER BY DATE_FORMAT(consumer_time,'%w')";
+        List<WeekResponse> list = new ArrayList<>();
+        try {
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(sql);
+            WeekResponse wr = new WeekResponse();
+            while(rs.next()){
+                if(rs.getInt(1)==0){
+                    wr.setSunday(rs.getFloat(2)+"");
+                }else if(rs.getInt(1)==1){
+                    wr.setMonday(rs.getFloat(2)+"");
+                }else if(rs.getInt(1)==2){
+                    wr.setTuesday(rs.getFloat(2)+"");
+                }else if(rs.getInt(1)==3){
+                    wr.setWednesday(rs.getFloat(2)+"");
+                }else if(rs.getInt(1)==4){
+                    wr.setThursday(rs.getFloat(2)+"");
+                }else if(rs.getInt(1)==5){
+                    wr.setFriday(rs.getFloat(2)+"");
+                }else if(rs.getInt(1)==6){
+                    wr.setSaturday(rs.getFloat(2)+"");
+                }
+            }
+            if(wr.getMonday()==null){
+                wr.setMonday("0");
+            }
+            if(wr.getTuesday()==null){
+                wr.setTuesday("0");
+            }
+            if(wr.getWednesday()==null){
+                wr.setWednesday("0");
+            }
+            if(wr.getThursday()==null){
+                wr.setThursday("0");
+            }
+            if(wr.getFriday()==null){
+                wr.setFriday("0");
+            }
+            if(wr.getSaturday()==null){
+                wr.setSaturday("0");
+            }
+            if(wr.getSunday()==null) {
+                wr.setSunday("0");
+            }
+            list.add(wr);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
 
 }
