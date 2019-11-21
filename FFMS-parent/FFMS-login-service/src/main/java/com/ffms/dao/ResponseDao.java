@@ -3,7 +3,7 @@ package com.ffms.dao;/*
   @date 2019/11/10 - 14:15
 */
 
-import com.ffms.domain.vo.*;
+import com.ffms.domain.VO.*;
 import com.ffms.domain.*;
 import com.ffms.utils.DBConnection;
 
@@ -22,43 +22,34 @@ public class ResponseDao {
      * 查询所有分类
      * @return List<CategoryResponse></>
      */
-    /**
-     * 分类信息
-     *
-     * @param user
-     * @return
-     */
+
     public List<CategoryResponse> ClassifiedInformation(User user) {
         List<CategoryResponse> classList = new ArrayList();
         int familyId = user.getFamilyId();
-        String sql = "SELECT  id ,category_id,consumer_name,consumer_time,consume_amount,trading_party,type,remarks,user_id,family_id FROM tb_consumer where consumer_time >= DATE_SUB(CURDATE(), INTERVAL 3 MONTH) and family_id= ?";
-        PreparedStatement pStmt = null;
+        String sql = "select * from tb_consumer where consumer_time >= DATE_SUB(CURDATE(), INTERVAL 3 MONTH) and family_id= ?";
         try {
-            pStmt = conn.prepareStatement(sql);
+            PreparedStatement pStmt = conn.prepareStatement(sql);
             pStmt.setInt(1, familyId);
             ResultSet rs = pStmt.executeQuery();
-            ResultSet total = pStmt.executeQuery();
-            String[] name = {"食品", "出行", "生活", "其他"};
-            double totalPrice = 0; // 统计总金额
-            while (total.next()) { // 统计总金额
-                totalPrice += total.getDouble(5);
-            }
-            while (rs.next()) {
-                CategoryResponse cate = new CategoryResponse();
-                for (int i = 0; i < 4; i++) {
-                    cate.setId(i);// 设置id;
-                    cate.setName(name[i]);// 设置分类名称
-                    double price = 0;// 统计分类总金额
-                    ResultSet num = pStmt.executeQuery();
-                    while (num.next()) {// 统计分类总金额
-                        if (num.getInt(2) == i + 1) {
-                            price += num.getDouble(5);
-                        }
-                    }
-                    cate.setAllPrice(price);
-                    cate.setAccount(price / totalPrice);
-                    classList.add(cate);
+            double []cost = new double [4];
+            String []name = {"食品","出行","生活","其他"};
+            while (rs.next()){
+                switch (rs.getInt(2)){
+                    case 1: cost[0] += rs.getDouble(5);break;
+                    case 2: cost[1] += rs.getDouble(5);break;
+                    case 3: cost[2] += rs.getDouble(5);break;
+                    default: cost[3] += rs.getDouble(5);break;
                 }
+            }
+            double totalCost = cost[0]+cost[1]+cost[2]+cost[3];
+            for (int i= 0; i < 4; i++){
+                CategoryResponse cate = new CategoryResponse();
+                cate.setAccount((cost[i]/totalCost)*100);
+                cate.setName(name[i]);
+                cate.setAllPrice(totalCost);
+                cate.setId(i+1);
+                classList.add(cate);
+
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -116,23 +107,82 @@ public class ResponseDao {
     }
 
     /**
+     * 查看上一周的消费记录
+     * @return
+     */
+    public List<WeekResponse> selectWeekConsume(){
+        String sql = "select DATE_FORMAT(consumer_time,'%w') as week,SUM(consumer_amount),consumer_time\n" +
+                "from tb_consumer  WHERE consumer_time >= DATE_SUB( DATE_ADD(curdate(),interval -day(curdate())+1 day) , INTERVAL  1  WEEK )\n" +
+                "GROUP BY DATE_FORMAT(consumer_time,'%w')  ORDER BY DATE_FORMAT(consumer_time,'%w')";
+        List<WeekResponse> list = new ArrayList<>();
+        try {
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(sql);
+            WeekResponse wr = new WeekResponse();
+            while(rs.next()){
+                if(rs.getInt(1)==0){
+                    wr.setSunday(rs.getFloat(2)+"");
+                }else if(rs.getInt(1)==1){
+                    wr.setMonday(rs.getFloat(2)+"");
+                }else if(rs.getInt(1)==2){
+                    wr.setTuesday(rs.getFloat(2)+"");
+                }else if(rs.getInt(1)==3){
+                    wr.setWednesday(rs.getFloat(2)+"");
+                }else if(rs.getInt(1)==4){
+                    wr.setThursday(rs.getFloat(2)+"");
+                }else if(rs.getInt(1)==5){
+                    wr.setFriday(rs.getFloat(2)+"");
+                }else if(rs.getInt(1)==6){
+                    wr.setSaturday(rs.getFloat(2)+"");
+                }
+            }
+            if(wr.getMonday()==null){
+                wr.setMonday("0");
+            }
+            if(wr.getTuesday()==null){
+                wr.setTuesday("0");
+            }
+            if(wr.getWednesday()==null){
+                wr.setWednesday("0");
+            }
+            if(wr.getThursday()==null){
+                wr.setThursday("0");
+            }
+            if(wr.getFriday()==null){
+                wr.setFriday("0");
+            }
+            if(wr.getSaturday()==null){
+                wr.setSaturday("0");
+            }
+            if(wr.getSunday()==null) {
+                wr.setSunday("0");
+            }
+            list.add(wr);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    /**
      * 更新消费记录
-     *
      * @param bill
      * @return
      */
     public boolean updateConsumptionInformation(Bill bill) {
-        String sql = "update tb_consumer set consumer_name = ? , consumer_time = ? , consumer_amount = ? , category_id = ? , trading_party = ? , type = ? , remarks = ? where id = ?";
+        String sql = "update tb_consumer set category_id=?,consumer_name=?,consumer_time=?,consumer_amount=?,trading_party=?,type=?,remarks=?,user_id=?,family_id=? where id=?";
         try {
             PreparedStatement pstmt = conn.prepareStatement(sql);
-            pstmt.setString(1, bill.getConsumerName());
-            pstmt.setString(2, bill.getConsumerNameTime());
-            pstmt.setDouble(3, bill.getConsumerAmount());
-            pstmt.setInt(4, bill.getCategoryId());
+            pstmt.setInt(1, bill.getCategoryId());
+            pstmt.setString(2, bill.getConsumerName());
+            pstmt.setString(3, bill.getConsumerNameTime());
+            pstmt.setDouble(4, bill.getConsumerAmount());
             pstmt.setString(5, bill.getTradingParty());
             pstmt.setInt(6, bill.getType());
             pstmt.setString(7, bill.getRemarks());
-            pstmt.setInt(8, bill.getId());
+            pstmt.setInt(8, bill.getUserId());
+            pstmt.setInt(9, bill.getFamilyId());
+            pstmt.setInt(10,bill.getId());
             int rs = pstmt.executeUpdate();
             return rs > 0;
         } catch (SQLException e) {
@@ -146,22 +196,21 @@ public class ResponseDao {
      * @param bill
      * @return
      */
-    public boolean insertConsumptionInformation(Bill bill){
-        String sql = "insert into tb_consumer(id,category_id,consumer_name,consumer_time,consume_amount,trading_party,type,remarks,user_id,family_id) values (?,?,?,?,?,?,?,?,?,?)";
+    public boolean insertConsumptionInformation(Bill bill) {
+        String sql = "insert into tb_consumer(category_id,consumer_name,consumer_time,consumer_amount,trading_party,type,remarks,user_id,family_id)values(?,?,?,?,?,?,?,?,?)";
         try {
             PreparedStatement pstmt = conn.prepareStatement(sql);
-            pstmt.setInt(1,bill.getId());
-            pstmt.setInt(2, bill.getCategoryId());
-            pstmt.setString(3, bill.getConsumerName());
-            pstmt.setString(4, bill.getConsumerNameTime());
-            pstmt.setDouble(5, bill.getConsumerAmount());
-            pstmt.setString(6, bill.getTradingParty());
-            pstmt.setInt(7, bill.getType());
-            pstmt.setString(8, bill.getRemarks());
-            pstmt.setInt(9, bill.getUserId());
-            pstmt.setInt(10,bill.getFamilyId());
+            pstmt.setInt(1, bill.getCategoryId());
+            pstmt.setString(2, bill.getConsumerName());
+            pstmt.setString(3, bill.getConsumerNameTime());
+            pstmt.setDouble(4, bill.getConsumerAmount());
+            pstmt.setString(5, bill.getTradingParty());
+            pstmt.setInt(6, bill.getType());
+            pstmt.setString(7, bill.getRemarks());
+            pstmt.setInt(8, bill.getUserId());
+            pstmt.setInt(9, bill.getFamilyId());
             int rs = pstmt.executeUpdate();
-            return rs > 0;
+            return rs>0;
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
@@ -173,16 +222,17 @@ public class ResponseDao {
      * @param id
      * @return
      */
-    public boolean deleteConsumptionInformation(int id){
+    public boolean deleteConsumptionInformation(int id) {
         String sql = "delete from tb_consumer where id = ?";
         try {
             PreparedStatement pstmt = conn.prepareStatement(sql);
-            pstmt.setInt(1,id);
+            pstmt.setInt(1, id);
             int rs = pstmt.executeUpdate();
-            return rs>0;
+            return rs > 0;
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
     }
+
 }
