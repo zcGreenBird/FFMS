@@ -1,4 +1,4 @@
-package com.ffms.domain.vo;/*
+package com.ffms.domain.VO;/*
   @auther WJW129
   @date 2019/11/10 - 13:52
 */
