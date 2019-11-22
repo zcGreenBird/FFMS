@@ -20,7 +20,9 @@
           <element id="archive" name="FFMS-common-0.0.1-SNAPSHOT.jar">
             <element id="module-output" name="FFMS-common" />
           </element>
-          <element id="library" level="project" name="Maven: mysql:mysql-connector-java:5.1.6" />
+          <element id="library" level="project" name="Maven: mysql:mysql-connector-java:8.0.14" />
+          <element id="library" level="project" name="Maven: com.google.protobuf:protobuf-java:3.6.1" />
+          <element id="library" level="project" name="Maven: javax.servlet:javax.servlet-api:4.0.1" />
           <element id="library" level="project" name="Maven: javax.servlet:jstl:1.2" />
           <element id="library" level="project" name="Maven: joda-time:joda-time:2.9.9" />
         </element>

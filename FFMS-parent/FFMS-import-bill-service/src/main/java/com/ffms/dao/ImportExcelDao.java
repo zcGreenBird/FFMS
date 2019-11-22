@@ -90,7 +90,7 @@ public class ImportExcelDao implements BillImportService {
                 }
 
             }
-            String sql="INSERT INTO tb_consumer(category_id, consumer_name, consumer_time, consume_amount, trading_party, type, remarks, user_id) VALUES (?,?,?,?,?,?,?,?)";
+            String sql="INSERT INTO tb_consumer(category_id, consumer_name, consumer_time, consumer_amount, trading_party, type, remarks, user_id) VALUES (?,?,?,?,?,?,?,?)";
             try (
                     PreparedStatement ps = conn.prepareStatement(sql)) {
                     ps.setInt(1,bill.getCategoryId());

@@ -5,7 +5,7 @@ import lombok.Data;
 
 /**
  * @author zc
- *User.java 实体类
+ * User.java 实体类
  * 2019年10月17日 下午2:51:44
  */
 @Data
@@ -19,7 +19,8 @@ public class User {
   private  String address;
   private  String phoneNo;
   private  String realName;
-
-
-
+    @Override
+    public String toString() {
+        return "User [id=" + id + ", name=" + name + ", password=" + password + "]";
+    }
 }
