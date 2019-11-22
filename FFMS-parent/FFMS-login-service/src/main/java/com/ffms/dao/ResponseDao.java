@@ -63,12 +63,12 @@ public class ResponseDao {
      */
     public List<LastTransResponse> selectLastTrans() {
         String sql = "SELECT user_id,consumer_name,consumer_time,consumer_amount FROM (SELECT user_id,consumer_name,consumer_time,consumer_amount FROM tb_consumer ORDER BY consumer_time DESC) c GROUP BY user_id;";
-        List<LastTransResponse> list = null;
+        List<LastTransResponse> list = new ArrayList<>();
         try {
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(sql);
             while (rs.next()) {
-                LastTransResponse ltr = null;
+                LastTransResponse ltr = new LastTransResponse();
                 ltr.setUserId(rs.getInt(1));
                 ltr.setName(rs.getString(2));
                 ltr.setTime(rs.getTime(3));
